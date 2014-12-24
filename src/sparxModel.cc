@@ -21,6 +21,7 @@ void SparxModel::loadMdl(std::string name)
     std::string line;
     std::ifstream fs(name.c_str());
     bool procTable = false;
+    std::vector<std::string> columns;
 
     if(fs.is_open()) {
         while(std::getline(fs, line)) {
@@ -56,6 +57,9 @@ void SparxModel::loadMdl(std::string name)
                     }
                     else if(strs[0] == "gas:dust") {
                         _gasToDust = boost::lexical_cast<double>(strs[1]);
+                    }
+                    else if(strs[0] == "columns") {
+                        boost::split(columns, strs[1], boost::is_any_of(","));
                     }
                 }
             }

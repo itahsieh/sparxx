@@ -25,7 +25,7 @@ USER_DIR = ../../src
 CPPFLAGS += -isystem $(GTEST_DIR)/include -I$(USER_DIR)
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -g -Wall -Wextra -pthread
+CXXFLAGS += -g -W -Wall -Wextra -Werror -pthread
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
@@ -71,7 +71,10 @@ gtest_main.a : gtest-all.o gtest_main.o
 # gtest_main.a, depending on whether it defines its own main()
 # function.
 
-model.o: $(USER_DIR)/sparxModel.cc $(USER_DIR)/sparxModel.h
+model.o: $(USER_DIR)/sparxModel.cc $(USER_DIR)/sparxModel.h Makefile
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
+
+model_unittest.o: model_unittest.cc $(USER_DIR)/sparxModel.h Makefile
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
 model_unittest : model_unittest.o model.o gtest_main.a
