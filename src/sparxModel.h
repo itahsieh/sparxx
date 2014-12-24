@@ -16,12 +16,12 @@ class Zone {
 
 class SparxModel {
     public:
-        SparxModel() { return; }
+        SparxModel();
         void loadMdl(std::string name);
 
-        double rMax;
-        long nCell;
-        double tCmb;
-        double gasToDust;
-        std::vector<Zone> zones;
+        double _rMax;
+        int _nCell;
+        double _tCmb;
+        double _gasToDust;
+        std::vector<Zone> _zones;
 };
