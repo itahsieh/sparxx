@@ -1,0 +1,20 @@
+#! /usr/bin/env python
+
+def cmd_unittest(args):
+  print 'Running tests in {}'.format(args.dir)
+
+
+
+if __name__ == "__main__":
+  import argparse
+  parser = argparse.ArgumentParser()
+  sub_parsers = parser.add_subparsers(help='sub-command help')
+
+  # Command: test
+  test_parser = sub_parsers.add_parser('test', help='Run unit tests')
+  test_parser.add_argument('-dir', default='.', help='''Directory to run the tests.''')
+  test_parser.set_defaults(func=cmd_unittest)
+
+  # Parse arguments
+  args = parser.parse_args()
+  args.func(args)
