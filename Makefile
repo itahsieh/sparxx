@@ -1,9 +1,10 @@
 OBJS:=main.o
 DEPENDS:=Makefile
-WARNINGS:=-Wall -Werror
+WARNINGS:=-W -Wall -Werror
+CFLAGS:=-std=c++0x
 
 spartran: $(OBJS)
-	g++ -o $@ $^
+	g++ $(WARNINGS) -o $@ $^
 
 %.o: %.cxx $(DEPENDS)
-	g++ $(WARNINGS) -o $@ -c $<
+	g++ $(CFLAGS) $(WARNINGS) -o $@ -c $<
