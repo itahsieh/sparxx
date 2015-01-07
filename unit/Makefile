@@ -7,7 +7,7 @@ USER_DIR=../src
 CPPFLAGS += -isystem $(GTEST_DIR)/include -I$(USER_DIR)
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -g -W -Wall -Wextra -Werror -pthread
+CXXFLAGS += -std=c++11 -g -W -Wall -Wextra -Werror -pthread
 
 # Link flags
 LNKFLAGS += -lpthread -L$(GTEST_DIR)/lib -lgtest -lgtest_main

@@ -1,27 +1,58 @@
 #include <vector>
 #include <string>
+#include <stdexcept>
+#include <unordered_map>
 
-class Zone {
-    public:
-        int id;
-        double ra;
-        double rb;
-        double nh;
-        double nm;
-        double tk;
-        double td;
-        double db;
-        double vr;
+//#define DEBUG
+
+class Cell {
+  public:
+    int id;
+    double ra;
+    double rb;
+    double nh;
+    double nm;
+    double tk;
+    double td;
+    double db;
+    double vr;
 };
 
 class SparxModel {
-    public:
-        SparxModel();
-        void loadMdl(std::string name);
+  public:
+    SparxModel();
+    void loadMdl(std::string name);
+    int getColIdx(std::string name) { return _colIdx[name]; };
+    int getColIdx(const char *name) { return _colIdx[std::string(name)]; };
 
-        double _rMax;
-        int _nCell;
-        double _tCmb;
-        double _gasToDust;
-        std::vector<Zone> _zones;
+    double _rMax; // Max radius of model
+    int _nCell; // Number of cells in model
+    double _tCmb; // Cosmic microwave background temperature (K)
+    double _gasToDust; // Gas to dust ratio
+    std::vector<Cell> _cells; // Vector of zones
+
+  private:
+    int findColumnIndex(std::string name);
+    void mapColumnIndex(std::string name);
+
+    std::vector<std::string> _columns; // Columns spec of table
+    std::unordered_map<std::string, int> _colIdx; // Mapping of column name to index
+};
+
+//
+// Exceptions
+//
+class SparxModelNoColumns : std::runtime_error {
+  public:
+    SparxModelNoColumns() : std::runtime_error("Columns undefined") {}
+};
+
+class SparxModelMissingColumn : std::runtime_error {
+  public:
+    SparxModelMissingColumn(const char *colName) : std::runtime_error(colName) {}
+};
+
+class SparxModelBadCellId : std::runtime_error {
+  public:
+    SparxModelBadCellId() : std::runtime_error("Cell id inconsistent with row number") {}
 };
