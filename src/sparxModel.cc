@@ -113,12 +113,12 @@ void SparxModel::loadMdl(std::string name)
         */
         cell.ra = boost::lexical_cast<double>(strs[getColIdx("ra")]); // m
         cell.rb = boost::lexical_cast<double>(strs[getColIdx("rb")]); // m
-        cell.nh = boost::lexical_cast<double>(strs[getColIdx("nh")]); // cm^-3
-        cell.nm = boost::lexical_cast<double>(strs[getColIdx("nm")]); // cm^-3
+        cell.nh = boost::lexical_cast<double>(strs[getColIdx("nh")]) * 1.0e6; // cm^-3 -> m^-3
+        cell.nm = boost::lexical_cast<double>(strs[getColIdx("nm")]) * 1.0e6; // cm^-3 -> m^-3
         cell.tk = boost::lexical_cast<double>(strs[getColIdx("tk")]); // K
         cell.td = boost::lexical_cast<double>(strs[getColIdx("td")]); // K
-        cell.db = boost::lexical_cast<double>(strs[getColIdx("db")]); // km s^-1
-        cell.vr = boost::lexical_cast<double>(strs[getColIdx("vr")]); // km s^-1
+        cell.db = boost::lexical_cast<double>(strs[getColIdx("db")]) * 1.0e3; // km s^-1 -> m s^-1
+        cell.vr = boost::lexical_cast<double>(strs[getColIdx("vr")]) * 1.0e3; // km s^-1 -> m s^-1
 
         _cells.push_back(cell);
 

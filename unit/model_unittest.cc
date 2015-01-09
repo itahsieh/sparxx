@@ -46,10 +46,10 @@ TEST(SparxModel, loadMdl) {
         EXPECT_EQ(i+1, model->_cells[i].id);
         EXPECT_FLOAT_EQ( 0.10272E+14, model->_cells[i].ra);
         EXPECT_FLOAT_EQ( 0.14106E+14, model->_cells[i].rb);
-        EXPECT_FLOAT_EQ( 0.11775E+08, model->_cells[i].nh);
-        EXPECT_FLOAT_EQ( 0.23550E-01, model->_cells[i].nm);
+        EXPECT_FLOAT_EQ( 0.11775E+14, model->_cells[i].nh);
+        EXPECT_FLOAT_EQ( 0.23550E+05, model->_cells[i].nm);
         EXPECT_FLOAT_EQ( 0.81791E+02, model->_cells[i].tk);
-        EXPECT_FLOAT_EQ( 0.12012E+00, model->_cells[i].db);
-        EXPECT_FLOAT_EQ(-0.26418E+01, model->_cells[i].vr);
+        EXPECT_FLOAT_EQ( 0.12012E+03, model->_cells[i].db);
+        EXPECT_FLOAT_EQ(-0.26418E+04, model->_cells[i].vr);
     }
 }

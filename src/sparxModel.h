@@ -8,14 +8,14 @@
 class Cell {
   public:
     int id;
-    double ra;
-    double rb;
-    double nh;
-    double nm;
-    double tk;
-    double td;
-    double db;
-    double vr;
+    double ra; //m
+    double rb; //m
+    double nh; //m^-3
+    double nm; //m^-3
+    double tk; //K
+    double td; //K
+    double db; //km s^-1
+    double vr; //km s^-1
 };
 
 class SparxModel {
