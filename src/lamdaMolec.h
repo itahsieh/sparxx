@@ -22,12 +22,12 @@ typedef struct MolecLine {
   double eU;
 } MolecLine;
 
-typedef struct MolecCollisionalTransition {
+typedef struct MolecCollTrans {
   int trans;
   int upperLev;
   int lowerLev;
   std::vector<double> collRates;
-} MolecCollisionalTransition;
+} MolecCollTrans;
 
 enum class CollPartner {
   H2 = 1,
@@ -44,7 +44,7 @@ typedef struct MolecCollData {
   int nTrans;
   int nTemps;
   std::vector<double> temps;
-  std::vector<std::vector<MolecCollisionalTransition>> molecCxTab;
+  std::vector<MolecCollTrans> cxTab;
   std::string notes;
 } MolecCollData;
 
@@ -58,11 +58,11 @@ class LamdaMolec {
     int nlev;
     int nlin;
     int ncoll;
+    std::vector<MolecCollData> collData;
 
   private:
     std::unordered_map<int, MolecLevel> _levTab;
     std::unordered_map<int, MolecLine> _lineData;
-    std::vector<MolecCollData> _collData;
 };
 
 class LamdaMolecBadNlev : std::runtime_error {
@@ -88,5 +88,10 @@ class LamdaMolecBadPartner : std::runtime_error {
 class LamdaMolecBadTemps : std::runtime_error {
   public:
     LamdaMolecBadTemps() : std::runtime_error("Bad temperatures") {}
+};
+
+class LamdaMolecBadCX : std::runtime_error {
+  public:
+    LamdaMolecBadCX() : std::runtime_error("Bad collisional transition") {}
 };
 #endif

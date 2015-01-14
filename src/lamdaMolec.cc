@@ -40,7 +40,9 @@ static void readLine(std::ifstream &fs, std::string &line, int nReads = 1, bool 
   for(int i = 0; i < nReads; i++) {
     lineCount++;
     std::getline(fs, line);
+    #ifdef DEBUG
     std::cout << "Line " << lineCount << ": " << line << std::endl;
+    #endif
   }
 
   // Trim the line before returning
@@ -97,14 +99,26 @@ void LamdaMolec::loadDat(std::string name)
     readLine(fs, line);
     std::vector<std::string> strs; // For token storage
     boost::split(strs, line, boost::is_any_of(" \t"), token_compress_on); // Split line into columns
-    MolecLine line;
-    line.trans = boost::lexical_cast<int>(strs[0]);
-    line.upperLev = boost::lexical_cast<int>(strs[1]);
-    line.lowerLev = boost::lexical_cast<int>(strs[2]);
-    line.einsteinA = boost::lexical_cast<double>(strs[3]);
-    line.freq = boost::lexical_cast<double>(strs[4]);
-    line.eU = boost::lexical_cast<double>(strs[5]);
-    _lineData.insert(std::pair<int, MolecLine>(line.trans, line));
+
+    MolecLine lineTmp;
+    lineTmp.trans = boost::lexical_cast<int>(strs[0]);
+    lineTmp.upperLev = boost::lexical_cast<int>(strs[1]);
+    lineTmp.lowerLev = boost::lexical_cast<int>(strs[2]);
+    lineTmp.einsteinA = boost::lexical_cast<double>(strs[3]);
+    lineTmp.freq = boost::lexical_cast<double>(strs[4]);
+    lineTmp.eU = boost::lexical_cast<double>(strs[5]);
+
+    if(lineTmp.trans < 1 || lineTmp.trans > nlin) {
+      throw LamdaMolecBadNlin();
+    }
+    if(lineTmp.upperLev < 1 || lineTmp.upperLev > nlev) {
+      throw LamdaMolecBadNlin();
+    }
+    if(lineTmp.lowerLev < 1 || lineTmp.lowerLev > nlev) {
+      throw LamdaMolecBadNlin();
+    }
+
+    _lineData.insert(std::pair<int, MolecLine>(lineTmp.trans, lineTmp));
   }
 
   // Lines 11+NLEV+NLIN - 12+NLEV+NLIN: number of collission partners
@@ -168,11 +182,42 @@ void LamdaMolec::loadDat(std::string name)
     // Lines 21+NLEV+NLIN-21+NLEV+NLIN+NCOL: transition number, upper level, lower level; rate coefficients (cm3s-1) at each temperature. The program interpolates between rate coefficients in the specified temperature range. Outside this range, it assumes the collisional de-excitation rate coefficients are constant with T, i.e., it uses rate coefficients specified at the highest T (400 K in this case)also for higher temperatures, and similarly at temperatures below the lowest value (10 K in this case) for which rate coefficients were specified. 
     readLine(fs, line);
     for(int j = 0; j < collDataTmp.nTrans; j++) {
+      MolecCollTrans collTransTmp; // Temporary object
+
       readLine(fs, line);
+      boost::split(strs, line, boost::is_any_of(" \t"), token_compress_on); // Split line into columns
+
+      if(static_cast<int>(strs.size()) != collDataTmp.nTemps + 3) {
+        throw LamdaMolecBadPartner();
+      }
+
+      collTransTmp.trans = boost::lexical_cast<int>(strs[0]); // Transition number
+      collTransTmp.upperLev = boost::lexical_cast<int>(strs[1]); // Upper level
+      collTransTmp.lowerLev = boost::lexical_cast<int>(strs[2]); // Lower level
+
+      if(collTransTmp.trans < 1 || collTransTmp.trans > collDataTmp.nTrans) {
+        throw LamdaMolecBadPartner();
+      }
+      if(collTransTmp.upperLev < 1 || collTransTmp.upperLev > nlev) {
+        throw LamdaMolecBadPartner();
+      }
+      if(collTransTmp.lowerLev < 1 || collTransTmp.lowerLev > nlev) {
+        throw LamdaMolecBadPartner();
+      }
+
+      for(int k = 0; k < collDataTmp.nTemps; k++) {
+        collTransTmp.collRates.push_back(boost::lexical_cast<double>(strs[3+k])); // Collisional coeff for temp k
+      }
+
+      // Append to table
+      collDataTmp.cxTab.push_back(collTransTmp);
     }
 
     // Lines 21+NLEV+NLIN+NCOL - 22+NLEV+NLIN+NCOL: notes
     readLine(fs, line, 2);
+
+    // Append to collData
+    collData.push_back(collDataTmp);
   }
   fs.close();
 
