@@ -19,7 +19,7 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = model_unittest
+TESTS = model_unittest lamdaMolec_unittest
 
 # House-keeping build targets.
 
@@ -32,8 +32,18 @@ model_unittest : model_unittest.o model.o
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LNKFLAGS)
 	./$@
 
+lamdaMolec_unittest : lamdaMolec_unittest.o lamdaMolec.o
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LNKFLAGS)
+	./$@
+
 model.o: $(USER_DIR)/sparxModel.cc $(USER_DIR)/sparxModel.h Makefile
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
+lamdaMolec.o: $(USER_DIR)/lamdaMolec.cc $(USER_DIR)/lamdaMolec.h Makefile
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
+
 model_unittest.o: model_unittest.cc $(USER_DIR)/sparxModel.h Makefile
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
+
+lamdaMolec_unittest.o: lamdaMolec_unittest.cc $(USER_DIR)/lamdaMolec.h Makefile
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
