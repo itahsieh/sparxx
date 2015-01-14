@@ -13,14 +13,15 @@ typedef struct MolecLevel {
   int j;
 } MolecLevel;
 
-typedef struct MolecLine {
-  int trans;
-  int upperLev;
-  int lowerLev;
-  double einsteinA;
-  double freq;
-  double eU;
-} MolecLine;
+class MolecLine {
+  public:
+    int trans;
+    int upperLev;
+    int lowerLev;
+    double Aul;
+    double freq;
+    double eU;
+};
 
 typedef struct MolecCollTrans {
   int trans;
@@ -59,10 +60,8 @@ class LamdaMolec {
     int nlin;
     int ncoll;
     std::vector<MolecCollData> collData;
-
-  private:
-    std::unordered_map<int, MolecLevel> _levTab;
-    std::unordered_map<int, MolecLine> _lineData;
+    std::unordered_map<int, MolecLevel> levData;
+    std::unordered_map<int, MolecLine> lineData;
 };
 
 class LamdaMolecBadNlev : std::runtime_error {

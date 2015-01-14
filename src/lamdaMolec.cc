@@ -80,10 +80,10 @@ void LamdaMolec::loadDat(std::string name)
     boost::split(strs, line, boost::is_any_of(" \t"), token_compress_on); // Split line into columns
     MolecLevel lev;
     lev.level = boost::lexical_cast<int>(strs[0]);
-    lev.energy = boost::lexical_cast<double>(strs[1]);
+    lev.energy = boost::lexical_cast<double>(strs[1]); // cm^-1
     lev.weight = boost::lexical_cast<double>(strs[2]);
     lev.j = boost::lexical_cast<int>(strs[3]);
-    _levTab.insert(std::pair<int, MolecLevel>(lev.level, lev));
+    levData.insert(std::pair<int, MolecLevel>(lev.level, lev));
   }
 
   // Line 8+NLEV - 9+NLEV: NLIN
@@ -100,15 +100,19 @@ void LamdaMolec::loadDat(std::string name)
     std::vector<std::string> strs; // For token storage
     boost::split(strs, line, boost::is_any_of(" \t"), token_compress_on); // Split line into columns
 
+    if(strs.size() != 6) {
+      throw LamdaMolecBadNlin();
+    }
+
     MolecLine lineTmp;
     lineTmp.trans = boost::lexical_cast<int>(strs[0]);
     lineTmp.upperLev = boost::lexical_cast<int>(strs[1]);
     lineTmp.lowerLev = boost::lexical_cast<int>(strs[2]);
-    lineTmp.einsteinA = boost::lexical_cast<double>(strs[3]);
-    lineTmp.freq = boost::lexical_cast<double>(strs[4]);
-    lineTmp.eU = boost::lexical_cast<double>(strs[5]);
+    lineTmp.Aul = boost::lexical_cast<double>(strs[3]); // s^-1
+    lineTmp.freq = boost::lexical_cast<double>(strs[4]); // GHz
+    lineTmp.eU = boost::lexical_cast<double>(strs[5]); // K
 
-    if(lineTmp.trans < 1 || lineTmp.trans > nlin) {
+    if(lineTmp.trans != i+1) {
       throw LamdaMolecBadNlin();
     }
     if(lineTmp.upperLev < 1 || lineTmp.upperLev > nlev) {
@@ -118,7 +122,7 @@ void LamdaMolec::loadDat(std::string name)
       throw LamdaMolecBadNlin();
     }
 
-    _lineData.insert(std::pair<int, MolecLine>(lineTmp.trans, lineTmp));
+    lineData.insert(std::pair<int, MolecLine>(lineTmp.trans, lineTmp));
   }
 
   // Lines 11+NLEV+NLIN - 12+NLEV+NLIN: number of collission partners
@@ -195,7 +199,7 @@ void LamdaMolec::loadDat(std::string name)
       collTransTmp.upperLev = boost::lexical_cast<int>(strs[1]); // Upper level
       collTransTmp.lowerLev = boost::lexical_cast<int>(strs[2]); // Lower level
 
-      if(collTransTmp.trans < 1 || collTransTmp.trans > collDataTmp.nTrans) {
+      if(collTransTmp.trans != j+1) {
         throw LamdaMolecBadPartner();
       }
       if(collTransTmp.upperLev < 1 || collTransTmp.upperLev > nlev) {

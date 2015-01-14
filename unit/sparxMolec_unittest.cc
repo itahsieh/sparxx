@@ -2,12 +2,12 @@
 #include <fstream>
 #include <memory>
 #include <exception>
-#include "lamdaMolec.h"
 #include "gtest/gtest.h"
+#include "sparxMolec.h"
 
-TEST(LamdaMolec, loadDat) {
+TEST(SparxMolec, loadDat) {
     //Pointer for handling model
-    std::auto_ptr<LamdaMolec> molec(new LamdaMolec);
+    std::auto_ptr<SparxMolec> molec(new SparxMolec);
 
     //Load molec from .dat file
     molec->loadDat("hco+.dat");

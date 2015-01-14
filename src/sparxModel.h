@@ -3,8 +3,6 @@
 #include <stdexcept>
 #include <unordered_map>
 
-//#define DEBUG
-
 class Cell {
   public:
     int id;

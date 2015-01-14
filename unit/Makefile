@@ -6,6 +6,10 @@ USER_DIR=../src
 # the compiler doesn't generate warnings in Google Test headers.
 CPPFLAGS += -isystem $(GTEST_DIR)/include -I$(USER_DIR)
 
+ifeq ($(DEBUG), 1)
+	CPPFLAGS += -DDEBUG
+endif
+
 # Flags passed to the C++ compiler.
 CXXFLAGS += -std=c++11 -g -W -Wall -Wextra -Werror -pthread
 
@@ -19,7 +23,7 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = model_unittest lamdaMolec_unittest
+TESTS = model_unittest lamdaMolec_unittest sparxMolec_unittest
 
 # House-keeping build targets.
 
@@ -30,11 +34,21 @@ clean :
 
 model_unittest : model_unittest.o model.o
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LNKFLAGS)
-	./$@
 
 lamdaMolec_unittest : lamdaMolec_unittest.o lamdaMolec.o
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LNKFLAGS)
-	./$@
+
+sparxMolec_unittest : sparxMolec_unittest.o sparxMolec.o lamdaMolec.o
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LNKFLAGS)
+
+model_unittest.o: model_unittest.cc $(USER_DIR)/sparxModel.h Makefile
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
+
+lamdaMolec_unittest.o: lamdaMolec_unittest.cc $(USER_DIR)/lamdaMolec.h Makefile
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
+
+sparxMolec_unittest.o: sparxMolec_unittest.cc $(USER_DIR)/sparxMolec.h $(USER_DIR)/lamdaMolec.h Makefile
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
 model.o: $(USER_DIR)/sparxModel.cc $(USER_DIR)/sparxModel.h Makefile
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
@@ -42,8 +56,5 @@ model.o: $(USER_DIR)/sparxModel.cc $(USER_DIR)/sparxModel.h Makefile
 lamdaMolec.o: $(USER_DIR)/lamdaMolec.cc $(USER_DIR)/lamdaMolec.h Makefile
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
-model_unittest.o: model_unittest.cc $(USER_DIR)/sparxModel.h Makefile
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
-
-lamdaMolec_unittest.o: lamdaMolec_unittest.cc $(USER_DIR)/lamdaMolec.h Makefile
+sparxMolec.o: $(USER_DIR)/sparxMolec.cc $(USER_DIR)/sparxMolec.h Makefile
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
